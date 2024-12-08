@@ -1,2 +1,2 @@
-import './style.css';
-console.log('hello webpack');
+import './style.scss';
+console.log('hello TA23A');

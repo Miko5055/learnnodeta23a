@@ -1,8 +1,6 @@
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-
-
 export default {
   entry: './src/index.js',
   output: {
@@ -20,7 +18,22 @@ export default {
     rules: [
       {
         test: /\.css$/i,
-        use: ["css-loader"],
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.css$/i,
+        use: [
+          "style-loader",
+           "css-loader", 
+          {
+            loader: "sass-loader",
+            options: {
+              sassOptions: {
+                quietDeps: true
+              }        
+            }
+          }
+        ],
       },
     ],
   },
