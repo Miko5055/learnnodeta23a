@@ -1,18 +1,18 @@
-import path from 'path';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
+import path from "path";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 
 export default {
-  entry: './src/index.js',
+  entry: "./src/index.js",
   output: {
-    filename: 'main.js',
-    path: path.resolve(import.meta.dirname, 'dist'),
+    filename: "main.js",
+    path: path.resolve(import.meta.dirname, "dist"),
   },
   devServer: {
     static: {
-      directory: path.join (import.meta.dirname, 'public'),
+      directory: path.join(import.meta.dirname, "public"),
     },
     compress: true,
-    port: 9000
+    port: 9000,
   },
   module: {
     rules: [
@@ -21,25 +21,37 @@ export default {
         use: ["style-loader", "css-loader"],
       },
       {
-        test: /\.css$/i,
-        use: [
-          "style-loader",
-           "css-loader", 
+        test: /\.scss$/i,
+        use: ["style-loader"
+          ,"css-loader",
           {
             loader: "sass-loader",
-            options: {
-              sassOptions: {
-                quietDeps: true
-              }        
+            options:{
+              sassOptions:{
+                quietDeps:true
+              }
             }
           }
         ],
       },
+      {
+        test: /\.njk$/,
+        use: [
+            {
+                loader: 'simple-nunjucks-loader',
+                options: {}
+            }
+        ]
+    }
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-        template: './src/index.html'
-    })
+      template: "./src/index.njk",
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'about.html',
+      template: "./src/about.njk",
+    }),
   ],
 };
