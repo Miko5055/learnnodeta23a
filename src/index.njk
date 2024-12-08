@@ -1,6 +1,25 @@
 {% extends 'src/partials.njk' %}
 {% block title %} Home Page {% endblock%}
 {% block content %} 
-    <h1>Hello Webpack</h1>
-    <h1>About</h1> 
+    <h1>Hello {{ name }} </h1>
+        {% for character in characters %}
+        <div class="card">
+            <header class="card-header">
+    <p class="card-header-title">Card header</p>
+  </header>
+  <div class="card-image">
+    <figure class="image is-4by3">
+      <img
+        src="https://bulma.io/assets/images/placeholders/1280x960.png"alt="Placeholder image"/>
+    </figure>
+  </div>
+  <div class="card-content">
+
+    <div class="content">
+
+    </div>
+  </div>
+</div>
+        <li>name</li>
+        {% endfor %}
 {% endblock %}
