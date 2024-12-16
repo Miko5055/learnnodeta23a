@@ -12,7 +12,7 @@ export default async () => {
   console.log("__dirname:", __dirname);
 
   // Fetch character data
-  let response = await fetch("https://rickandmortyapi.com/api/character");
+  let response = await fetch("https://rickandmortyapi.com/api/character/?page=4");
   let json = await response.json();
   let characters = json.results;
 
