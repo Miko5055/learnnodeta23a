@@ -1,80 +1,83 @@
 import path from "path";
+import { fileURLToPath } from "url";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import fetch from "node-fetch";
+import * as sass from 'sass' // Sass loader implementation
 
+// Simulate __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default async () => {
+  console.log("__dirname:", __dirname);
 
-  let response = await fetch('https://rickandmortyapi.com/api/character');
+  // Fetch character data
+  let response = await fetch("https://rickandmortyapi.com/api/character");
   let json = await response.json();
   let characters = json.results;
-  let pages = [];
-  characters.forEach(character => {
-    let page = new HtmlWebpackPlugin({
+
+  // Generate HtmlWebpackPlugin instances for character pages
+  let pages = characters.map((character) => {
+    return new HtmlWebpackPlugin({
       template: "./src/character.njk",
-      filename: 'character_' + character.id + '.html',
-      templateParameters: {
-        character
-      },
+      filename: `character_${character.id}.html`,
+      templateParameters: { character },
     });
-    pages.push(page);
   });
-  return{
-  entry: "./src/index.js",
-  output: {
-    filename: "main.js",
-    path: path.resolve(import.meta.dirname, "dist"),
-  },
-  devServer: {
-    static: {
-      directory: path.join(import.meta.dirname, "public"),
+
+  return {
+    entry: "./src/index.js",
+    output: {
+      filename: "main.js",
+      path: path.resolve(__dirname, "dist"), // Correct usage
     },
-    compress: true,
-    port: 9000,
-  },
-  module: {
-    rules: [
-      {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+    devServer: {
+      static: {
+        directory: path.join(__dirname, "public"), // Correct usage
       },
-      {
-        test: /\.scss$/i,
-        use: ["style-loader"
-          ,"css-loader",
-          {
-            loader: "sass-loader",
-            options:{
-              sassOptions:{
-                quietDeps:true
-              }
-            }
-          }
-        ],
-      },
-      {
-        test: /\.njk$/,
-        use: [
+      compress: true,
+      port: 9000,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.css$/i,
+          use: ["style-loader", "css-loader"],
+        },
+        {
+          test: /\.scss$/i,
+          use: [
+            "style-loader",
+            "css-loader",
             {
-                loader: 'simple-nunjucks-loader',
-                options: {}
-            }
-        ]
-    }
+              loader: "sass-loader",
+              options: {
+                implementation: sass, // Correct implementation
+                sassOptions: {
+                  quietDeps: true,
+                },
+              },
+            },
+          ],
+        },
+        {
+          test: /\.njk$/,
+          use: [
+            {
+              loader: "simple-nunjucks-loader",
+              options: {},
+            },
+          ],
+        },
+      ],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: "./src/index.njk",
+        filename: "index.html",
+        templateParameters: { characters },
+      }),
+      ...pages,
     ],
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "./src/index.njk",
-      templateParameters: {
-        name:'Mikk',
-        characters, //.characters: characters 
-      }
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'about.html',
-      template: "./src/about.njk",
-    }),
-    ...pages
-  ],
-};
+  };
 };
